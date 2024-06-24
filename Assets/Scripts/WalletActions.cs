@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using static WalletManager;
@@ -8,6 +9,7 @@ public class WalletActions : MonoBehaviour
 {
     // Reference to the list item prefab
     public GameObject listItemPrefab;
+    public GameObject walletDetail;
 
     // Reference to the content object of the Scroll View (optional)
     public Transform content;
@@ -18,6 +20,15 @@ public class WalletActions : MonoBehaviour
     private WalletManager walletManager;
 
     public TMP_InputField inputField;
+
+    public TMP_Dropdown dropdown;
+    public TMP_Dropdown schemeDropdown;
+    public TMP_Dropdown wordLengthDropdown;
+    public TMP_Text tmp_address;
+    public TMP_Text tmp_public_key;
+    public TMP_Text tmp_private_key;
+    public TMP_Text tmp_scheme;
+    public TMP_Text tmp_mnemonic;
 
     public string GetText()
     {
@@ -31,24 +42,69 @@ public class WalletActions : MonoBehaviour
     void Start()
     {
         walletManager = FindObjectOfType<WalletManager>();
+        dropdown.onValueChanged.AddListener(delegate
+        {
+            DropdownValueChanged(dropdown);
+        });
+    }
+    void DropdownValueChanged(TMP_Dropdown change)
+    {
+        // Output the selected option
+        Debug.Log("Selected: " + change.options[change.value].text);
+    }
+    void SetDefaultValue()
+    {
+        // Set the default value
+        SetDropdownValue(0);
     }
 
-    public void GetWallets()
+    public void SetDropdownValue(int index)
     {
-        wallets = walletManager.GetWallets();
+        if (index >= 0 && index < dropdown.options.Count)
+        {
+            dropdown.value = index;
+            dropdown.RefreshShownValue();
+            DropdownValueChanged(dropdown); // Call the method to handle any logic needed for the new value
+        }
+        else
+        {
+            Debug.LogWarning("Dropdown value index is out of range.");
+        }
+    }
+    public void SetDropdownValue(string option)
+    {
+        int index = dropdown.options.FindIndex(opt => opt.text == option);
+        if (index != -1)
+        {
+            SetDropdownValue(index);
+        }
+        else
+        {
+            Debug.LogWarning("Dropdown option not found: " + option);
+        }
     }
     public void LoadWallets()
     {
-        wallets = walletManager.GetWallets();
+        wallets = walletManager.LoadWallets();
         PopulateList();
     }
     public void GenerateAndAddNew()
     {
-
         walletManager.GenerateAndAddNew();
         wallets = walletManager.LoadWallets();
         PopulateList();
     }
+    public void CreateWallet()
+    {
+        WalletData wallet = walletManager.GenerateWallet(schemeDropdown.options[schemeDropdown.value].text, wordLengthDropdown.options[wordLengthDropdown.value].text);
+        wallet.Show();
+        tmp_scheme.text = wallet.KeyScheme;
+        tmp_address.text = wallet.Address;
+        tmp_public_key.text = wallet.PublicBase64Key;
+        tmp_private_key.text = wallet.PrivateKey;
+        tmp_mnemonic.text = wallet.Mnemonic;
+    }
+
 
     public void ImportFromPrivateKey()
     {
@@ -63,19 +119,22 @@ public class WalletActions : MonoBehaviour
         wallets = walletManager.LoadWallets();
         PopulateList();
     }
-    void PopulateList()
+    public void PopulateList()
     {
+        Debug.Log("Load count" + wallets.Length);
         // Clear old list items
         foreach (Transform child in content)
         {
             Destroy(child.gameObject);
         }
+        dropdown.ClearOptions();
 
         foreach (var wallet in wallets)
         {
+
             // Create a new list item from the prefab
             GameObject newItem = Instantiate(listItemPrefab, content);
-
+            dropdown.options.Add(new TMP_Dropdown.OptionData(wallet.Address));
             // Find and set the text components of the list item
             TextMeshProUGUI[] textComponents = newItem.GetComponentsInChildren<TextMeshProUGUI>();
             foreach (TextMeshProUGUI textComponent in textComponents)
@@ -100,5 +159,6 @@ public class WalletActions : MonoBehaviour
                 }
             }
         }
+        SetDefaultValue();
     }
 }

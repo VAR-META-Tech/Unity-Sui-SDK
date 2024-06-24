@@ -30,6 +30,12 @@ public class BalanceManager : MonoBehaviour
     [DllImport(LIB_NAME)]
     private static extern void free_balance_array(BalanceArray balanceArray);
 
+    [DllImport(LIB_NAME)]
+    private static extern System.IntPtr request_tokens_from_faucet_(System.IntPtr address);
+
+    [DllImport(LIB_NAME)]
+    private static extern System.IntPtr programmable_transaction(System.IntPtr sender_address, System.IntPtr recipient_address, ulong amount);
+
 
     private BalanceArray balanceArray;
 
@@ -74,6 +80,36 @@ public class BalanceManager : MonoBehaviour
     {
         Debug.Log("Destroy balance Array");
         free_balance_array(balanceArray);
+    }
+
+    public void RequestTokensFromFaucet(string address)
+    {
+        System.IntPtr _address = Marshal.StringToHGlobalAnsi(address);
+        try
+        {
+            Debug.Log(request_tokens_from_faucet_(_address));
+        }
+        finally
+        {
+            // Free the unmanaged string memory
+            Marshal.FreeHGlobal(_address);
+        }
+    }
+
+    public void ProgrammableTransaction(string sender_address, string recipient_address, ulong amount)
+    {
+        System.IntPtr _sender_address = Marshal.StringToHGlobalAnsi(sender_address);
+        System.IntPtr _recipient_address = Marshal.StringToHGlobalAnsi(recipient_address);
+        try
+        {
+            Debug.Log(programmable_transaction(_sender_address, _recipient_address, amount));
+        }
+        finally
+        {
+            // Free the unmanaged string memory
+            Marshal.FreeHGlobal(_sender_address);
+            Marshal.FreeHGlobal(_recipient_address);
+        }
     }
 
     public BalanceData[] LoadWallets(string address)

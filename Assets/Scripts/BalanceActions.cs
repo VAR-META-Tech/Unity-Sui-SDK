@@ -16,23 +16,57 @@ public class BalanceActions : MonoBehaviour
     private BalanceData[] balances;
 
     private BalanceManager balanceManager;
-    public TMP_Text addressTMP;
+    public TMP_Dropdown dropdown;
+    public TMP_InputField tmp_amount;
+    public TMP_InputField tmp_recepient_address;
 
-
-    void Start()
+    void Awake()
     {
         balanceManager = FindObjectOfType<BalanceManager>();
+        dropdown.onValueChanged.AddListener(delegate
+     {
+         DropdownValueChanged(dropdown);
+     });
+    }
+
+    void DropdownValueChanged(TMP_Dropdown change)
+    {
+        // Output the selected option
+        Debug.Log("Selected:2 " + change.options[change.value].text);
+        LoadBalances();
     }
 
     public void LoadBalances()
     {
-        Debug.Log("Load Balance of " + addressTMP.text);
-        balances = balanceManager.LoadWallets(addressTMP.text);
+        Debug.Log("Start Loading Balance ");
+        if (balanceManager == null) return;
+        Debug.Log("Load Balance of " + dropdown.options[dropdown.value].text);
+        Debug.Log("Balance manager " + balanceManager.ToString());
+        balances = balanceManager.LoadWallets(dropdown.options[dropdown.value].text);
         PopulateList();
+    }
+
+    public void ProgrammableTransaction()
+    {
+        if (ulong.TryParse(tmp_amount.text, out ulong amount))
+        {
+            Debug.Log("Input converted to ulong: " + amount);
+        }
+        else
+        {
+            Debug.LogError("Invalid input, unable to convert to ulong.");
+        }
+        balanceManager.ProgrammableTransaction(dropdown.options[dropdown.value].text, tmp_recepient_address.text, amount);
+    }
+
+    public void RequestTokensFromFaucet()
+    {
+        balanceManager.RequestTokensFromFaucet(dropdown.options[dropdown.value].text);
     }
 
     void PopulateList()
     {
+        if (!content) return;
         // Clear old list items
         foreach (Transform child in content)
         {

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -7,13 +8,40 @@ public class WalletManager : MonoBehaviour
 {
     const string LIB_NAME = "libsui_rust_sdk";
     [StructLayout(LayoutKind.Sequential)]
-    private struct Wallet
+    public struct Wallet
     {
         public System.IntPtr address;
         public System.IntPtr mnemonic;
         public System.IntPtr public_base64_key;
         public System.IntPtr private_key;
         public System.IntPtr key_scheme;
+        public void Show()
+        {
+            Debug.Log($"Address: {PtrToStringAnsiSafe(address, "Address")}");
+            Debug.Log($"Mnemonic: {PtrToStringAnsiSafe(mnemonic, "Mnemonic")}");
+            Debug.Log($"Public Base64 Key: {PtrToStringAnsiSafe(public_base64_key, "Public Base64 Key")}");
+            Debug.Log($"Private Key: {PtrToStringAnsiSafe(private_key, "Private Key")}");
+            Debug.Log($"Key Scheme: {PtrToStringAnsiSafe(key_scheme, "Key Scheme")}");
+        }
+
+        // Helper method to safely convert IntPtr to string with debugging
+        private static string PtrToStringAnsiSafe(IntPtr ptr, string fieldName)
+        {
+            if (ptr == IntPtr.Zero)
+            {
+                Debug.LogError($"{fieldName} pointer is zero");
+                return string.Empty;
+            }
+            try
+            {
+                return Marshal.PtrToStringAnsi(ptr);
+            }
+            catch (Exception ex)
+            {
+                Debug.LogError($"Error converting {fieldName}: {ex.Message}");
+                return string.Empty;
+            }
+        }
     }
 
     [StructLayout(LayoutKind.Sequential)]
@@ -27,7 +55,7 @@ public class WalletManager : MonoBehaviour
     private static extern WalletList get_wallets();
 
     [DllImport(LIB_NAME)]
-    private static extern Wallet generate_and_add_key();
+    private static extern IntPtr generate_and_add_key();
 
     [DllImport(LIB_NAME)]
     private static extern void free_wallet_list(WalletList walletList);
@@ -36,7 +64,13 @@ public class WalletManager : MonoBehaviour
     private static extern void import_from_private_key(System.IntPtr privateKey);
 
     [DllImport(LIB_NAME)]
-    private static extern void import_from_mnemonic(System.IntPtr mnemonic);
+    private static extern System.IntPtr import_from_mnemonic(System.IntPtr mnemonic);
+
+    [DllImport(LIB_NAME)]
+    private static extern IntPtr generate_wallet(string key_scheme, string word_length);
+
+    [DllImport(LIB_NAME)]
+    public static extern void free_wallet(IntPtr wallet);
 
     private WalletList walletList;
 
@@ -76,6 +110,7 @@ public class WalletManager : MonoBehaviour
             Destroy(gameObject);
         }
         walletList = get_wallets();
+
     }
 
     void OnDestroy()
@@ -142,23 +177,32 @@ public class WalletManager : MonoBehaviour
         return wallets;
     }
 
-
-    public WalletData GenerateWallet()
+    public WalletData GenerateWallet(string key_scheme, string word_length)
     {
-        Wallet wallet = generate_and_add_key();
-        return new WalletData
+        try
         {
-            Address = Marshal.PtrToStringAnsi(wallet.address),
-            Mnemonic = Marshal.PtrToStringAnsi(wallet.mnemonic),
-            PublicBase64Key = Marshal.PtrToStringAnsi(wallet.public_base64_key),
-            PrivateKey = Marshal.PtrToStringAnsi(wallet.private_key),
-            KeyScheme = Marshal.PtrToStringAnsi(wallet.key_scheme)
-        };
+            IntPtr walletPtr = WalletManager.generate_wallet(key_scheme, word_length);
+            Wallet wallet = Marshal.PtrToStructure<Wallet>(walletPtr);
+            return new WalletData
+            {
+                Address = Marshal.PtrToStringAnsi(wallet.address),
+                Mnemonic = Marshal.PtrToStringAnsi(wallet.mnemonic),
+                PublicBase64Key = Marshal.PtrToStringAnsi(wallet.public_base64_key),
+                PrivateKey = Marshal.PtrToStringAnsi(wallet.private_key),
+                KeyScheme = Marshal.PtrToStringAnsi(wallet.key_scheme)
+            };
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError($"Exception in WalletTest: {ex.Message}");
+            return default(WalletData);
+        }
     }
 
     public void GenerateAndAddNew()
     {
         generate_and_add_key();
+
     }
 
     public struct WalletData
@@ -168,5 +212,24 @@ public class WalletManager : MonoBehaviour
         public string PublicBase64Key;
         public string PrivateKey;
         public string KeyScheme;
+        public WalletData FromWallet(Wallet wallet)
+        {
+            return new WalletData
+            {
+                Address = Marshal.PtrToStringAnsi(wallet.address),
+                Mnemonic = Marshal.PtrToStringAnsi(wallet.mnemonic),
+                PublicBase64Key = Marshal.PtrToStringAnsi(wallet.public_base64_key),
+                PrivateKey = Marshal.PtrToStringAnsi(wallet.private_key),
+                KeyScheme = Marshal.PtrToStringAnsi(wallet.key_scheme)
+            };
+        }
+        public void Show()
+        {
+            Debug.Log($"Address: {Address}");
+            Debug.Log($"Mnemonic: {Mnemonic}");
+            Debug.Log($"Public Base64 Key: {PublicBase64Key}");
+            Debug.Log($"Private Key: {PrivateKey}");
+            Debug.Log($"Key Scheme: {KeyScheme}");
+        }
     }
 }
