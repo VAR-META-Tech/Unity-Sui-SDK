@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using static BalanceManager;
+using static BalanceLib;
 
 public class BalanceActions : MonoBehaviour
 {
@@ -15,14 +15,14 @@ public class BalanceActions : MonoBehaviour
     // Sample data
     private BalanceData[] balances;
 
-    private BalanceManager balanceManager;
+    private BalanceLib balanceManager;
     public TMP_Dropdown dropdown;
     public TMP_InputField tmp_amount;
     public TMP_InputField tmp_recepient_address;
 
     void Awake()
     {
-        balanceManager = FindObjectOfType<BalanceManager>();
+        balanceManager = FindObjectOfType<BalanceLib>();
         dropdown.onValueChanged.AddListener(delegate
      {
          DropdownValueChanged(dropdown);
@@ -32,16 +32,13 @@ public class BalanceActions : MonoBehaviour
     void DropdownValueChanged(TMP_Dropdown change)
     {
         // Output the selected option
-        Debug.Log("Selected:2 " + change.options[change.value].text);
         LoadBalances();
     }
 
     public void LoadBalances()
     {
-        Debug.Log("Start Loading Balance ");
+        Debug.Log("Load balance of: " + dropdown.options[dropdown.value].text);
         if (balanceManager == null) return;
-        Debug.Log("Load Balance of " + dropdown.options[dropdown.value].text);
-        Debug.Log("Balance manager " + balanceManager.ToString());
         balances = balanceManager.LoadWallets(dropdown.options[dropdown.value].text);
         PopulateList();
     }
@@ -75,9 +72,6 @@ public class BalanceActions : MonoBehaviour
 
         foreach (var balance in balances)
         {
-            Debug.Log("CoinType: " + balance.CoinType);
-            Debug.Log("CoinObjectCount: " + balance.CoinObjectCount);
-            Debug.Log("TotalBalance: " + balance.TotalBalance[0]);
             // Create a new list item from the prefab
             GameObject newItem = Instantiate(listItemPrefab, content);
 

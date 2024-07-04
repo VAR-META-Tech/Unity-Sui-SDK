@@ -6,9 +6,17 @@ using UnityEngine;
 public class ClipboardManager : MonoBehaviour
 {
     public TMP_Text text;
+    public TMP_Dropdown dropdown;
 
     public void CopyToClipboard()
     {
-        GUIUtility.systemCopyBuffer = text.text;
+        if (text != null)
+        {
+            GUIUtility.systemCopyBuffer = text.text;
+        }
+        else if (dropdown != null)
+        {
+            GUIUtility.systemCopyBuffer = dropdown.options[dropdown.value].text;
+        }
     }
 }

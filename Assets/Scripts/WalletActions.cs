@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using TMPro;
 using UnityEngine;
-using static WalletManager;
+using static WalletLib;
 
 public class WalletActions : MonoBehaviour
 {
@@ -17,7 +17,7 @@ public class WalletActions : MonoBehaviour
     // Sample data
     private WalletData[] wallets;
 
-    private WalletManager walletManager;
+    private WalletLib walletLib;
 
     public TMP_InputField inputField;
 
@@ -39,9 +39,14 @@ public class WalletActions : MonoBehaviour
         return string.Empty;
     }
 
-    void Start()
+    void Awake()
     {
-        walletManager = FindObjectOfType<WalletManager>();
+        walletLib = FindObjectOfType<WalletLib>();
+        if (walletLib == null)
+        {
+            Debug.LogError("WalletLib component not found in the scene. Ensure a GameObject has this component attached.");
+            return; // Exit Start() if WalletLib is not found
+        }
         dropdown.onValueChanged.AddListener(delegate
         {
             DropdownValueChanged(dropdown);
@@ -85,18 +90,18 @@ public class WalletActions : MonoBehaviour
     }
     public void LoadWallets()
     {
-        wallets = walletManager.LoadWallets();
+        wallets = walletLib.LoadWallets();
         PopulateList();
     }
     public void GenerateAndAddNew()
     {
-        walletManager.GenerateAndAddNew();
-        wallets = walletManager.LoadWallets();
+        walletLib.GenerateAndAddNew();
+        wallets = walletLib.LoadWallets();
         PopulateList();
     }
     public void CreateWallet()
     {
-        WalletData wallet = walletManager.GenerateWallet(schemeDropdown.options[schemeDropdown.value].text, wordLengthDropdown.options[wordLengthDropdown.value].text);
+        WalletData wallet = walletLib.GenerateWallet(schemeDropdown.options[schemeDropdown.value].text, wordLengthDropdown.options[wordLengthDropdown.value].text);
         wallet.Show();
         tmp_scheme.text = wallet.KeyScheme;
         tmp_address.text = wallet.Address;
@@ -108,20 +113,19 @@ public class WalletActions : MonoBehaviour
 
     public void ImportFromPrivateKey()
     {
-        walletManager.ImportFromPrivateKey(GetText());
-        wallets = walletManager.LoadWallets();
+        walletLib.ImportFromPrivateKey(GetText());
+        wallets = walletLib.LoadWallets();
         PopulateList();
     }
 
     public void ImportFromMnemonic()
     {
-        walletManager.ImportFromMnemonic(GetText());
-        wallets = walletManager.LoadWallets();
+        walletLib.ImportFromMnemonic(GetText());
+        wallets = walletLib.LoadWallets();
         PopulateList();
     }
     public void PopulateList()
     {
-        Debug.Log("Load count" + wallets.Length);
         // Clear old list items
         foreach (Transform child in content)
         {

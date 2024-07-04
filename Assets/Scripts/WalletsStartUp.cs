@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using static WalletManager;
+using static WalletLib;
 
 public class WalletsStartUp : MonoBehaviour
 {
