@@ -56,8 +56,6 @@ public class MultisigLib : MonoBehaviour
         }
 
         // Clean up allocated memory
-        FreeCStringArray(cAddresses);
-        FreeCU8Array(cWeights);
         return multiSigData;
     }
 
@@ -86,23 +84,6 @@ public class MultisigLib : MonoBehaviour
         };
     }
 
-    private static void FreeCStringArray(CStringArray cArray)
-    {
-        IntPtr[] ptrs = new IntPtr[cArray.len];
-        Marshal.Copy(cArray.data, ptrs, 0, cArray.len);
-        foreach (IntPtr ptr in ptrs)
-        {
-            Marshal.FreeHGlobal(ptr);
-        }
-        GCHandle handle = GCHandle.FromIntPtr(cArray.data);
-        handle.Free();
-    }
-
-    private static void FreeCU8Array(CU8Array cArray)
-    {
-        GCHandle handle = GCHandle.FromIntPtr(cArray.data);
-        handle.Free();
-    }
 
     // Define the structure for MultiSigData
     public struct MultiSigData

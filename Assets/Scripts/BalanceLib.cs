@@ -114,6 +114,7 @@ public class BalanceLib : MonoBehaviour
 
     public BalanceData[] LoadWallets(string address)
     {
+        Debug.Log($"Load Balance Of {address}");
         free_balance_array(balanceArray);
         balanceArray = get_balances(address);
         return GetBalances();
@@ -134,7 +135,6 @@ public class BalanceLib : MonoBehaviour
                 CoinType = Marshal.PtrToStringAnsi(balance.coin_type),
                 CoinObjectCount = (ulong)balance.coin_object_count,
                 TotalBalance = balance.total_balance
-
             };
 
 
