@@ -18,12 +18,20 @@ public class MultisigActions : MonoBehaviour
     public TMP_Dropdown addressDropdown;
     public TMP_Dropdown addressDropdown2;
     public Transform multisigScrollViewContent;
+    public Transform multisigScrollViewContent2;
 
     public TMP_InputField threadHoldInputField;
 
     public TMP_Text multisigAddress;
     public TMP_Text multisigBytes;
     public TMP_Text multisigBalance;
+
+    public TMP_InputField transferTo;
+    public TMP_InputField amount;
+
+    private TransactionResult transactionResult;
+    public TMP_Text transactionBytes;
+
 
     private WalletData[] wallets;
     // Start is called before the first frame update
@@ -200,11 +208,45 @@ public class MultisigActions : MonoBehaviour
             Debug.LogWarning("Dropdown option not found: " + option);
         }
     }
+
+    ulong GetAmountTransfer()
+    {
+        if (ulong.TryParse(amount.text, out ulong result))
+        {
+            return result;
+        }
+        else
+        {
+            amount.text = string.Empty;
+        }
+        return 0;
+    }
+    public void CreateTransaction()
+    {
+        transactionResult = multisigLib.CreateTransaction(multisigAddress.text, transferTo.text, GetAmountTransfer());
+        transactionBytes.text = transactionResult.BytesToHexString();
+        Debug.Log($"Is success:{transactionResult.IsSuccess}");
+        transactionResult.Print();
+    }
     public void LoadWallets()
     {
         wallets = walletLib.LoadWallets();
         UpdateWallets(addressDropdown);
         UpdateWallets(addressDropdown2);
+    }
+
+    public void SignAndExecuteTransaction()
+    {
+        string[] addresses = GetAddressValuesFromScrollView(multisigScrollViewContent2);
+        Debug.Log("multisigBytes: " + multisigBytes.text);
+        Debug.Log("txBytes: " + transactionBytes.text);
+        foreach (string address in addresses)
+        {
+            Debug.Log("address: " + address);
+
+        }
+        string result = multisigLib.SignAndExecuteTransaction(multisigBytes.text, transactionBytes.text, addresses);
+        Debug.Log("SignAndExecuteTransaction: " + result);
     }
 
     public void UpdateWallets(TMP_Dropdown dropdown)
