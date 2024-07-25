@@ -7,8 +7,8 @@ using UnityEngine;
 public class NFTLib : MonoBehaviour
 {
     const string LIB_NAME = "libsui_rust_sdk";
-    const string NFT_PACKAGE_ID = "0xd1efbd86210322b550a8d6017ad5113fda2bd4f486593096f83e7b9ce3cbd002";
-    const string NFT_OBJECT_TYPE = "0xd1efbd86210322b550a8d6017ad5113fda2bd4f486593096f83e7b9ce3cbd002::nft::NFT";
+    const string NFT_PACKAGE_ID = "0x43d037dda49e37c977a1e2a4ed261147659a2913867d439a101c57b41216c216";
+    const string NFT_OBJECT_TYPE = "0x43d037dda49e37c977a1e2a4ed261147659a2913867d439a101c57b41216c216::nft::NFT";
     public struct CSuiObjectData
     {
         public string object_id;
