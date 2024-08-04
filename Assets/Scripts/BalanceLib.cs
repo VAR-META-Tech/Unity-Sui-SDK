@@ -31,11 +31,13 @@ public class BalanceLib : MonoBehaviour
     private static extern void free_balance_array(BalanceArray balanceArray);
 
     [DllImport(LIB_NAME)]
-    private static extern System.IntPtr request_tokens_from_faucet_(System.IntPtr address);
+    private static extern string request_tokens_from_faucet_(System.IntPtr address);
 
     [DllImport(LIB_NAME)]
-    private static extern System.IntPtr programmable_transaction(System.IntPtr sender_address, System.IntPtr recipient_address, ulong amount);
+    private static extern string programmable_transaction(System.IntPtr sender_address, System.IntPtr recipient_address, ulong amount);
 
+    [DllImport(LIB_NAME)]
+    private static extern string programmable_transaction_allow_sponser(System.IntPtr sender_address, System.IntPtr recipient_address, ulong amount, System.IntPtr sponser_address);
 
     private BalanceArray balanceArray;
 
@@ -108,6 +110,23 @@ public class BalanceLib : MonoBehaviour
         {
             // Free the unmanaged string memory
             Marshal.FreeHGlobal(_sender_address);
+            Marshal.FreeHGlobal(_recipient_address);
+        }
+    }
+    public void ProgrammableTransactionAllowSponser(string sender_address, string recipient_address, ulong amount, string sponser_address)
+    {
+        System.IntPtr _sender_address = Marshal.StringToHGlobalAnsi(sender_address);
+        System.IntPtr _sponser_address = Marshal.StringToHGlobalAnsi(sponser_address);
+        System.IntPtr _recipient_address = Marshal.StringToHGlobalAnsi(recipient_address);
+        try
+        {
+            Debug.Log(programmable_transaction_allow_sponser(_sender_address, _recipient_address, amount, _sponser_address));
+        }
+        finally
+        {
+            // Free the unmanaged string memory
+            Marshal.FreeHGlobal(_sender_address);
+            Marshal.FreeHGlobal(_sponser_address);
             Marshal.FreeHGlobal(_recipient_address);
         }
     }

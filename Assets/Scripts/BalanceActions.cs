@@ -19,6 +19,7 @@ public class BalanceActions : MonoBehaviour
     public TMP_Dropdown dropdown;
     public TMP_InputField tmp_amount;
     public TMP_InputField tmp_recepient_address;
+    public TMP_InputField tmp_sponser_address;
 
     void Awake()
     {
@@ -54,6 +55,19 @@ public class BalanceActions : MonoBehaviour
             Debug.LogError("Invalid input, unable to convert to ulong.");
         }
         balanceManager.ProgrammableTransaction(dropdown.options[dropdown.value].text, tmp_recepient_address.text, amount);
+    }
+
+    public void ProgrammableTransactionAllowSponser()
+    {
+        if (ulong.TryParse(tmp_amount.text, out ulong amount))
+        {
+            Debug.Log("Input converted to ulong: " + amount);
+        }
+        else
+        {
+            Debug.LogError("Invalid input, unable to convert to ulong.");
+        }
+        balanceManager.ProgrammableTransactionAllowSponser(dropdown.options[dropdown.value].text, tmp_recepient_address.text, amount, tmp_sponser_address.text);
     }
 
     public void RequestTokensFromFaucet()
