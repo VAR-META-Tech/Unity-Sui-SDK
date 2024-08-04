@@ -49,14 +49,19 @@ public class MultisigActions : MonoBehaviour
        {
            DropdownValueChanged(addressDropdown2);
        });
-        if (walletLib == null || balanceLib)
+        if (walletLib == null)
         {
-            Debug.LogError("WalletLib or BalanceLib component not found in the scene. Ensure a GameObject has this component attached.");
+            Debug.LogError("WalletLib component not found in the scene. Ensure a GameObject has this component attached.");
+            return; // Exit Start() if WalletLib is not found
+        }
+        if (balanceLib == null)
+        {
+            Debug.LogError("balanceLib component not found in the scene. Ensure a GameObject has this component attached.");
             return; // Exit Start() if WalletLib is not found
         }
         if (multisigLib == null)
         {
-            Debug.LogError("WalletLib component not found in the scene. Ensure a GameObject has this component attached.");
+            Debug.LogError("multisigLib component not found in the scene. Ensure a GameObject has this component attached.");
             return; // Exit Start() if WalletLib is not found
         }
     }
