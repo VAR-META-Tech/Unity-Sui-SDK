@@ -1,6 +1,5 @@
-<p align="center">
-	<img src="./Resource/SuiLogo.png" alt="Unreal-Sui-SDKLogo" width="256" height="128" />
-</p>
+![645bca632d1c27a85cee236d_sui-logo8d3c44e](https://github.com/user-attachments/assets/5b74fbae-1a87-427d-9c57-8bc164ca09cb)
+
 
 
 # Unity-Sui-SDK #
