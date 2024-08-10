@@ -6,12 +6,12 @@
 
 Unity-Sui-SDK is a sample example to help developers integrate Sui blockchain technology into their C# and Unity projects.
 
-- [Project Layout](#project-layout)
+- [Project Layout](#project-structure)
 - [Features](#features)
 - [Requirements](#requirements)
 - [Dependencies](#dependencies)
 - [Installation](#installation)
-- [Using Unity-Sui-SDK](#using-unreal-sui-sdk)
+- [Using Unity-Sui-SDK](#using-unity-sui-sdk)
 - [Examples](#examples)
 - [License](#license)
 
