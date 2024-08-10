@@ -48,7 +48,7 @@ This guide provides step-by-step instructions for installing and setting up on m
 - **Visual Studio Code** with C# development environment
 - **Install Sui** Follow this guide to install Sui https://docs.sui.io/guides/developer/getting-started/sui-install
 ## Project Setup
-Run follow command to setting Envỉroment befor testing:
+Run follow command to setting Environment before testing:
 1. Check Sui Client Environment:  
     ```sh 
     Sui client envs
