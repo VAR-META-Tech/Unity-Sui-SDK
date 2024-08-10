@@ -45,7 +45,7 @@ Unity-Sui-SDK is a sample example to help developers integrate Sui blockchain te
 This guide provides step-by-step instructions for installing and setting up on macOS platforms. Ensure you have the following prerequisites installed to build the project:
 
 ## Prerequisites
-- **Visual Studio Code** with C++ development environment
+- **Visual Studio Code** with C# development environment
 - **Install Sui** Follow this guide to install Sui https://docs.sui.io/guides/developer/getting-started/sui-install
 ## Project Setup
 Run follow command to setting Envỉroment befor testing:
