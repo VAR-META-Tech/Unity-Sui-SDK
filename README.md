@@ -25,9 +25,41 @@ Unity-Sui-SDK is a sample example to help developers integrate Sui blockchain te
 
 ### Features ###
 
-- [x]  Compatibility with main, dev, and test networks.
-- [x]  Comprehensive Unit and Integration Test coverage.
+#### General
+- [x] Compatibility with main, dev, and test networks.
+- [x] Integration with Sui blockchain using native libraries.
+- [x] Cross-platform support (macOS, Windows, Linux).
 
+#### SuiNFT.cs
+- [x] Mint new NFTs.
+- [x] Transfer NFTs to other addresses.
+- [x] Retrieve wallet objects related to NFTs.
+- [x] Conversion between raw and managed data structures for NFT objects.
+
+#### SuiBCS.cs
+- [x] Basic serialization and deserialization of Sui types.
+- [x] Support for various Sui types including integers, floats, booleans, strings, and addresses.
+- [x] Conversion of Sui types to BCS (Binary Canonical Serialization) format.
+
+#### SuiMultisig.cs
+- [x] Create and manage multisig wallets.
+- [x] Create transactions from multisig wallets.
+- [x] Sign and execute transactions using multisig wallets.
+- [x] Handling of multisig data structures and transaction results.
+
+#### SuiTransactionBuilder.cs
+- [x] Create and manage transaction builders.
+- [x] Add various types of commands to transactions (e.g., move call, transfer object, split coins, merge coins).
+- [x] Execute transactions with or without a sponsor.
+
+#### SuiWallet.cs
+- [x] Singleton pattern for easy access to wallet functionalities.
+- [x] Generate new wallets with specified key schemes and word lengths.
+- [x] Import wallets from private keys.
+- [x] Import wallets from mnemonics.
+- [x] List all wallets.
+- [x] Display wallet details.
+- [x] Generate and add new keys to the wallet.
 
 ### Requirements ###
 
@@ -82,11 +114,10 @@ Run follow command to setting Environment before testing:
     sui client gas
     ```
 
-### Using Unity-Sui-SDK
+### Install Unity-Sui-SDK
 
-   1. Build the libsui_rust_sdk file from https://github.com/VAR-META-Tech/Rust2C-Sui-SDK or copy the file in the Plugin folder; and place in your project.
-    
-   2. There are multiple scripts to handle the integration with SUi network included (WalletLib.cs, BalanceLib.cs, NFTLib.cs, MultisigLib.cs), use can run test in this project or can include these files to your own project.
+   1. Via 'Add package from git URL' in Unity Package Manager
+   2. Download the latest sui-unity-sdk.unitypackage from the releases: https://github.com/VAR-META-Tech/Unity-Sui-SDK/releases
 
 Note: For the NFTLib.cs you need to build the NFT package from https://github.com/VAR-META-Tech/Move-Sui-SDK and replace the received NFT_PACKAGE_ID and NFT_OBJECT_TYPE
 
@@ -94,6 +125,55 @@ Note: For the NFTLib.cs you need to build the NFT package from https://github.co
 
 The SDK comes with several examples that show how to leverage the Rust2C-Sui-SDK to its full potential. The examples include Wallet Creation and Management, Token Transfers,  NFT Minting, Account Funding, and Multi-signature.
 
+#### Wallet
+The `SuiWallet` class provides various functionalities to manage wallets in your Unity project. Below are some examples of how touse the `SuiWallet` class.
+
+##### Generate a New Wallet
+To generate a new wallet with a specified key scheme and word length:
+```csharp
+SuiWallet.WalletData newWallet = SuiWallet.Instance.GenerateWallet("ED25519", "12");
+newWallet.Show();
+```
+##### Import Wallet from Private Key
+To import a wallet using a private key:
+```csharp
+bool success = SuiWallet.Instance.ImportFromPrivateKey("your_private_key_here");
+if (success)
+{
+    Debug.Log("Wallet imported successfully.");
+}
+else
+{
+    Debug.LogError("Failed to import wallet.");
+}
+```
+##### Import Wallet from Mnemonic
+To import a wallet using a mnemonic phrase:
+```csharp
+bool success = SuiWallet.Instance.ImportFromMnemonic("your_mnemonic_phrase_here");
+if (success)
+{
+    Debug.Log("Wallet imported successfully.");
+}
+else
+{
+    Debug.LogError("Failed to import wallet.");
+}
+```
+##### List All Wallets
+To list all wallets:
+```csharp
+SuiWallet.WalletData[] wallets = SuiWallet.Instance.LoadWallets();
+foreach (var wallet in wallets)
+{
+    wallet.Show();
+}
+```
+##### Generate and Add New Key
+To generate and add a new key to the wallet:
+```csharp
+SuiWallet.Instance.GenerateAndAddNew();
+```
 
 ### License ###
 This project is licensed under the Apache-2.0 License. Refer to the LICENSE.txt file for details.
