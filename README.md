@@ -125,6 +125,51 @@ Note: For the NFTLib.cs you need to build the NFT package from https://github.co
 
 The SDK comes with several examples that show how to leverage the Rust2C-Sui-SDK to its full potential. The examples include Wallet Creation and Management, Token Transfers,  NFT Minting, Account Funding, and Multi-signature.
 
+#### Network Building
+The `SuiClient` class provides methods to build and switch between different Sui networks (testnet, devnet, mainnet). Below are some examples of how to use the `SuiClient` class.
+
+##### Build Testnet
+To build the testnet environment:
+```csharp
+bool success = SuiClient.Instance.BuildTestnet();
+if (success)
+{
+    Debug.Log("Testnet built successfully.");
+}
+else
+{
+    Debug.LogError("Failed to build testnet.");
+}
+```
+
+##### Build Devnet
+To build the devnet environment:
+```csharp
+bool success = SuiClient.Instance.BuildDevnet();
+if (success)
+{
+    Debug.Log("Devnet built successfully.");
+}
+else
+{
+    Debug.LogError("Failed to build devnet.");
+}
+```
+
+##### Build Mainnet
+To build the mainnet environment:
+```csharp
+bool success = SuiClient.Instance.BuildMainnet();
+if (success)
+{
+    Debug.Log("Mainnet built successfully.");
+}
+else
+{
+    Debug.LogError("Failed to build mainnet.");
+}
+```
+
 #### Wallet
 The `SuiWallet` class provides various functionalities to manage wallets in your Unity project. Below are some examples of how touse the `SuiWallet` class.
 
@@ -175,5 +220,119 @@ To generate and add a new key to the wallet:
 SuiWallet.Instance.GenerateAndAddNew();
 ```
 
+#### Transactions
+The `SuiTransactionBuilder` class allows you to create and manage transactions. Below are some examples of how to use the `SuiTransactionBuilder` class.
+
+##### Create a New Transaction
+To create a new transaction:
+```csharp
+SuiTransactionBuilder transactionBuilder = new SuiTransactionBuilder();
+```
+
+##### Add a Move Call Command
+To add a move call command to the transaction:
+```csharp
+SuiTypeTags typeTags = transactionBuilder.CreateTypeTags();
+SuiAgruments arguments = transactionBuilder.CreateArguments();
+transactionBuilder.AddMoveCallCommand("package_id", "module_name", "function_name", typeTags, arguments);
+```
+
+##### Add a Transfer Object Command
+To add a transfer object command to the transaction:
+```csharp
+SuiAgruments agreements = transactionBuilder.CreateArguments();
+SuiAgruments recipient = transactionBuilder.CreateArguments();
+transactionBuilder.AddTransferObjectCommand(agreements, recipient);
+```
+
+##### Execute the Transaction
+To execute the transaction:
+```csharp
+string result = transactionBuilder.ExecuteTransaction("sender_address", 1000);
+Debug.Log(result);
+```
+
+##### Execute the Transaction with a Sponsor
+To execute the transaction with a sponsor:
+```csharp
+string result = transactionBuilder.ExecuteTransactionAllowSponser("sender_address", 1000, "sponsor_address");
+Debug.Log(result);
+```
+
+
+#### Basic Serialization and Deserialization
+The `SuiBCS` class provides methods for basic serialization and deserialization of Sui types. Below are some examples of how to use the `SuiBCS` class.
+
+##### Serialize Data
+To serialize data of a specific Sui type:
+```csharp
+string data = "12345";
+SuiPure serializedData = SuiBCS.BscBasic(SuiBCS.SuiType.U64, data);
+IntPtr serializedPtr = serializedData.GetData();
+```
+
+#### Multisig Wallets
+The `SuiMultisig` class provides functionalities to create and manage multisig wallets. Below are some examples of how to use the `SuiMultisig` class.
+
+##### Create a Multisig Wallet
+To create a new multisig wallet:
+```csharp
+SuiMultisig multisigWallet = new SuiMultisig();
+multisigWallet.CreateMultisigWallet(new string[] { "address1", "address2", "address3" }, 2);
+```
+
+##### Create a Transaction from Multisig Wallet
+To create a transaction from a multisig wallet:
+```csharp
+SuiTransactionBuilder transactionBuilder = multisigWallet.CreateTransaction();
+```
+
+##### Sign and Execute a Multisig Transaction
+To sign and execute a transaction using a multisig wallet:
+```csharp
+string result = multisigWallet.SignAndExecuteTransaction(transactionBuilder, "signer_address");
+Debug.Log(result);
+```
+
+#### NFT Operations
+The `SuiNFT` class provides functionalities to mint, transfer, and retrieve NFT-related wallet objects. Below are some examples of how to use the `SuiNFT` class.
+
+##### Mint a New NFT
+To mint a new NFT:
+```csharp
+SuiNFT suiNFT = new SuiNFT();
+string result = suiNFT.Mint_NFT("sender_address", "NFT Name", "NFT Description", "NFT URI");
+Debug.Log("Mint Result: " + result);
+```
+
+##### Transfer an NFT
+To transfer an NFT to another address:
+```csharp
+SuiNFT suiNFT = new SuiNFT();
+string result = suiNFT.Transfer_NFT("sender_address", "nft_id", "recipient_address");
+Debug.Log("Transfer Result: " + result);
+```
+
+##### Retrieve Wallet Objects
+To retrieve wallet objects related to NFTs:
+```csharp
+SuiNFT suiNFT = new SuiNFT();
+List<SuiNFT.CSuiObjectData> walletObjects = suiNFT.Get_wallet_objects("wallet_address");
+foreach (var obj in walletObjects)
+{
+    Debug.Log("Object ID: " + obj.object_id);
+    Debug.Log("Version: " + obj.version);
+    Debug.Log("Digest: " + obj.digest);
+    Debug.Log("Type: " + obj.type_);
+    Debug.Log("Owner: " + obj.owner);
+    Debug.Log("Previous Transaction: " + obj.previous_transaction);
+    Debug.Log("Storage Rebate: " + obj.storage_rebate);
+    Debug.Log("Display: " + obj.display);
+    Debug.Log("Content: " + obj.content);
+    Debug.Log("BCS: " + obj.bcs);
+}
+```
+
 ### License ###
 This project is licensed under the Apache-2.0 License. Refer to the LICENSE.txt file for details.
+
