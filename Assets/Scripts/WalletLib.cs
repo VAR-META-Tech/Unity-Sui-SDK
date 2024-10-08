@@ -64,7 +64,7 @@ public class WalletLib : MonoBehaviour
     private static extern void import_from_private_key(System.IntPtr privateKey);
 
     [DllImport(LIB_NAME)]
-    private static extern System.IntPtr import_from_mnemonic(System.IntPtr mnemonic);
+    private static extern System.IntPtr import_from_mnemonic(System.IntPtr mnemonic, System.IntPtr sig_scheme, System.IntPtr alias);
 
     [DllImport(LIB_NAME)]
     private static extern IntPtr generate_wallet(string key_scheme, string word_length);
@@ -143,10 +143,12 @@ public class WalletLib : MonoBehaviour
     public void ImportFromMnemonic(string mnemonic)
     {
         System.IntPtr mnemonicPtr = Marshal.StringToHGlobalAnsi(mnemonic);
+        System.IntPtr sig_schemePTR = Marshal.StringToHGlobalAnsi("ED25519");
+        System.IntPtr aliasPTR = Marshal.StringToHGlobalAnsi("");
         try
         {
             Debug.Log("ImportFromMnemonic" + mnemonicPtr);
-            import_from_mnemonic(mnemonicPtr);
+            import_from_mnemonic(mnemonicPtr, sig_schemePTR, aliasPTR);
         }
         finally
         {

@@ -77,7 +77,7 @@ public class MultisigLib : MonoBehaviour
     public static extern CU8Array create_transaction(string fromAddress, string toAddress, ulong amount);
 
     [DllImport(LIB_NAME)]
-    private static extern IntPtr sign_and_execute_transaction(CU8Array multisig, CU8Array tx, CStringArray addresses);
+    private static extern IntPtr sign_and_execute_transaction_miltisig(CU8Array multisig, CU8Array tx, CStringArray addresses);
 
     public TransactionResult CreateTransaction(string fromAddress, string toAddress, ulong amount)
     {
@@ -101,7 +101,7 @@ public class MultisigLib : MonoBehaviour
         CU8Array multisig = new CU8Array(multisigHex);
         CU8Array tx = new CU8Array(txHex);
         CStringArray cAddresses = CreateCStringArray(addresses);
-        IntPtr resultPtr = sign_and_execute_transaction(multisig, tx, cAddresses);
+        IntPtr resultPtr = sign_and_execute_transaction_miltisig(multisig, tx, cAddresses);
         string resultString = Marshal.PtrToStringAnsi(resultPtr);
         FreeCStringArray(cAddresses);
         return resultString;

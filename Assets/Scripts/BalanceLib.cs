@@ -26,12 +26,11 @@ public class BalanceLib : MonoBehaviour
     [DllImport(LIB_NAME)]
     private static extern BalanceArray get_balances(string address);
 
-
     [DllImport(LIB_NAME)]
     private static extern void free_balance_array(BalanceArray balanceArray);
 
     [DllImport(LIB_NAME)]
-    private static extern string request_tokens_from_faucet_(System.IntPtr address);
+    private static extern string request_tokens_from_faucet(System.IntPtr address);
 
     [DllImport(LIB_NAME)]
     private static extern string programmable_transaction(System.IntPtr sender_address, System.IntPtr recipient_address, ulong amount);
@@ -89,7 +88,7 @@ public class BalanceLib : MonoBehaviour
         System.IntPtr _address = Marshal.StringToHGlobalAnsi(address);
         try
         {
-            Debug.Log(request_tokens_from_faucet_(_address));
+            Debug.Log(request_tokens_from_faucet(_address));
         }
         finally
         {
