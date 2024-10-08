@@ -18,9 +18,8 @@ Unity-Sui-SDK is a sample example to help developers integrate Sui blockchain te
 ### Project Structure ###  
 
 1. **`Plugins/`**:: This directory contains the project's library files, including libsui_rust_sdk.dylib library to integrate with SUI network.
-2. **`Prefabs/`**:: This directory contains all the project's prefabs.
-3. **`Scenes/`**:: This directory contains all the scenes.
-4. **`Scripts/`**:: This directory contains all the project's scripts.
+2. **`SuiUnitySDK/`**:: The core SDK files and scripts.
+3. **`Samples/`**:: Includes sample scenes or scripts demonstrating how to use the SDK.
 5. **`TextMesh Pro/`**: This directory contains the TextMesh Pro package assets.
 
 ### Features ###

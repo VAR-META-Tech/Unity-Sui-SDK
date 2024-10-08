@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "SUI.sln"
+    "dotnet.defaultSolution": "Unity-Sui-SDK.sln"
 }
