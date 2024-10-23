@@ -79,7 +79,7 @@ public class SuiMultisig : MonoBehaviour
     [DllImport(LIB_NAME)]
     private static extern IntPtr sign_and_execute_transaction_miltisig(CU8Array multisig, CU8Array tx, CStringArray addresses);
 
-    public TransactionResult CreateTransaction(string fromAddress, string toAddress, ulong amount)
+    public static TransactionResult CreateTransaction(string fromAddress, string toAddress, ulong amount)
     {
         CU8Array result = create_transaction(fromAddress, toAddress, amount);
         if (result.error == IntPtr.Zero)
@@ -96,7 +96,7 @@ public class SuiMultisig : MonoBehaviour
         }
     }
 
-    public string SignAndExecuteTransaction(string multisigHex, string txHex, string[] addresses)
+    public static string SignAndExecuteTransaction(string multisigHex, string txHex, string[] addresses)
     {
         CU8Array multisig = new CU8Array(multisigHex);
         CU8Array tx = new CU8Array(txHex);
@@ -106,7 +106,7 @@ public class SuiMultisig : MonoBehaviour
         FreeCStringArray(cAddresses);
         return resultString;
     }
-    public MultiSigData Get_or_create_multisig(string[] addresses, byte[] weights, ushort threshold)
+    public static MultiSigData Get_or_create_multisig(string[] addresses, byte[] weights, ushort threshold)
     {
         // Prepare input data for P/Invoke
         CStringArray cAddresses = CreateCStringArray(addresses);
@@ -206,7 +206,7 @@ public class SuiMultisig : MonoBehaviour
             return bytes;
         }
     }
-    private void FreeCStringArray(CStringArray cArray)
+    private static void FreeCStringArray(CStringArray cArray)
     {
         IntPtr[] stringPtrs = new IntPtr[cArray.len];
         Marshal.Copy(cArray.data, stringPtrs, 0, (int)cArray.len);

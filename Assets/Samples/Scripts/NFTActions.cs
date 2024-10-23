@@ -8,7 +8,6 @@ using static SuiNFT;
 
 public class NFTActions : MonoBehaviour
 {
-    private SuiNFT nftLib;
     [System.Serializable]
     public class NFT
     {
@@ -28,10 +27,6 @@ public class NFTActions : MonoBehaviour
     List<CSuiObjectData> nfts;
     void Awake()
     {
-        if (nftLib == null)
-        {
-            nftLib = FindObjectOfType<SuiNFT>();
-        }
         addresses.onValueChanged.AddListener(delegate
      {
          DropdownValueChanged(addresses);
@@ -45,9 +40,8 @@ public class NFTActions : MonoBehaviour
     public void Get_wallet_objects()
     {
         Debug.Log("Load Get_wallet_objects of: " + addresses.options[addresses.value].text);
-        if (nftLib == null) return;
         Debug.Log("Get_wallet_objects of: " + addresses.options[addresses.value].text);
-        nfts = nftLib.Get_wallet_objects(addresses.options[addresses.value].text);
+        nfts = SuiNFT.Get_wallet_objects(addresses.options[addresses.value].text);
         PopulateList();
     }
 
@@ -150,12 +144,12 @@ public class NFTActions : MonoBehaviour
     }
     public void Mint_NFT()
     {
-        string result = nftLib.Mint_NFT(addresses.options[addresses.value].text, nftName.text, nftDescription.text, nftUrl.text);
+        string result = SuiNFT.Mint_NFT(addresses.options[addresses.value].text, nftName.text, nftDescription.text, nftUrl.text);
         Debug.Log(result);
     }
     public void Transfer_NFT()
     {
-        string result = nftLib.Transfer_NFT(addresses.options[addresses.value].text, nftId.text, toAddress.text);
+        string result = SuiNFT.Transfer_NFT(addresses.options[addresses.value].text, nftId.text, toAddress.text);
         Debug.Log(result);
     }
 }

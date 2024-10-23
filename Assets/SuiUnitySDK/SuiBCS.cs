@@ -25,7 +25,8 @@ public class SuiBCS
         Address
     }
 
-    public static SuiPure BscBasic(SuiType type, string data) {
+    public static SuiPure BscBasic(SuiType type, string data)
+    {
         string typeStr = type.ToString().ToLower();
         IntPtr result = bsc_basic(typeStr, data);
         return new SuiPure(result);
@@ -41,7 +42,8 @@ public class SuiPure
         this.data = data;
     }
 
-    public IntPtr GetData(){
+    public IntPtr GetData()
+    {
         return data;
     }
 }

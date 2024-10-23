@@ -17,8 +17,6 @@ public class WalletActions : MonoBehaviour
     // Sample data
     private WalletData[] wallets;
 
-    private SuiWallet walletLib;
-
     public TMP_InputField inputField;
 
     public TMP_Dropdown dropdown;
@@ -41,12 +39,6 @@ public class WalletActions : MonoBehaviour
 
     void Awake()
     {
-        walletLib = FindObjectOfType<SuiWallet>();
-        if (walletLib == null)
-        {
-            Debug.LogError("WalletLib component not found in the scene. Ensure a GameObject has this component attached.");
-            return; // Exit Start() if WalletLib is not found
-        }
         dropdown.onValueChanged.AddListener(delegate
         {
             DropdownValueChanged(dropdown);
@@ -90,18 +82,18 @@ public class WalletActions : MonoBehaviour
     }
     public void LoadWallets()
     {
-        wallets = walletLib.LoadWallets();
+        wallets = SuiWallet.LoadWallets();
         PopulateList();
     }
     public void GenerateAndAddNew()
     {
-        walletLib.GenerateAndAddNew();
-        wallets = walletLib.LoadWallets();
+        SuiWallet.GenerateAndAddNew();
+        wallets = SuiWallet.LoadWallets();
         PopulateList();
     }
     public void CreateWallet()
     {
-        WalletData wallet = walletLib.GenerateWallet(schemeDropdown.options[schemeDropdown.value].text, wordLengthDropdown.options[wordLengthDropdown.value].text);
+        WalletData wallet = SuiWallet.GenerateWallet(schemeDropdown.options[schemeDropdown.value].text, wordLengthDropdown.options[wordLengthDropdown.value].text);
         wallet.Show();
         tmp_scheme.text = wallet.KeyScheme;
         tmp_address.text = wallet.Address;
@@ -113,15 +105,15 @@ public class WalletActions : MonoBehaviour
 
     public void ImportFromPrivateKey()
     {
-        walletLib.ImportFromPrivateKey(GetText());
-        wallets = walletLib.LoadWallets();
+        SuiWallet.ImportFromPrivateKey(GetText());
+        wallets = SuiWallet.LoadWallets();
         PopulateList();
     }
 
     public void ImportFromMnemonic()
     {
-        walletLib.ImportFromMnemonic(GetText());
-        wallets = walletLib.LoadWallets();
+        SuiWallet.ImportFromMnemonic(GetText());
+        wallets = SuiWallet.LoadWallets();
         PopulateList();
     }
     public void PopulateList()

@@ -54,7 +54,7 @@ public class SuiNFT : MonoBehaviour
     [DllImport(LIB_NAME, CallingConvention = CallingConvention.Cdecl)]
     private static extern CSuiObjectDataArray get_wallet_objects(string address, string object_type);
 
-    public string Mint_NFT(string sender_address, string name, string description, string uri)
+    public static string Mint_NFT(string sender_address, string name, string description, string uri)
     {
         IntPtr resultPtr = mint_nft(NFT_PACKAGE_ID, sender_address, name, description, uri);
         string result = Marshal.PtrToStringAnsi(resultPtr);
@@ -62,7 +62,7 @@ public class SuiNFT : MonoBehaviour
         return result;
     }
 
-    public string Transfer_NFT(string sender_address, string nft_id, string recipient_address)
+    public static string Transfer_NFT(string sender_address, string nft_id, string recipient_address)
     {
         IntPtr resultPtr = transfer_nft(NFT_PACKAGE_ID, sender_address, nft_id, recipient_address);
         string result = Marshal.PtrToStringAnsi(resultPtr);
@@ -105,7 +105,7 @@ public class SuiNFT : MonoBehaviour
         return list;
     }
 
-    public List<CSuiObjectData> Get_wallet_objects(string address)
+    public static List<CSuiObjectData> Get_wallet_objects(string address)
     {
         Debug.Log("Get wallet objects of : " + address);
 

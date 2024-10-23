@@ -17,7 +17,7 @@ public class SuiClient : MonoBehaviour
 
     private static SuiClient _instance;
 
-     public static SuiClient Instance
+    public static SuiClient Instance
     {
         get
         {
@@ -54,17 +54,17 @@ public class SuiClient : MonoBehaviour
     {
     }
 
-    public bool BuildTestnet()
+    public static bool BuildTestnet()
     {
         return build_testnet() == 0;
     }
 
-    public bool BuildDevnet()
+    public static bool BuildDevnet()
     {
         return build_devnet() == 0;
     }
 
-    public bool BuildMainnet()
+    public static bool BuildMainnet()
     {
         return build_mainnet() == 0;
     }

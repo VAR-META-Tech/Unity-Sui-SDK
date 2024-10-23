@@ -38,52 +38,10 @@ public class SuiApi : MonoBehaviour
     [DllImport(LIB_NAME)]
     private static extern string programmable_transaction_allow_sponser(System.IntPtr sender_address, System.IntPtr recipient_address, ulong amount, System.IntPtr sponser_address);
 
-    private BalanceArray balanceArray;
+    private static BalanceArray balanceArray;
 
-    // The static instance of the singleton
-    private static SuiApi _instance;
 
-    // Property to access the instance
-    public static SuiApi Instance
-    {
-        get
-        {
-            // If the instance is null, find it in the scene
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<SuiApi>();
-
-                // If still null, create a new GameObject and attach this script
-                if (_instance == null)
-                {
-                    GameObject singletonObject = new GameObject(typeof(SuiApi).ToString());
-                    _instance = singletonObject.AddComponent<SuiApi>();
-                }
-            }
-            return _instance;
-        }
-    }
-
-    void Awake()
-    {
-        if (_instance == null)
-        {
-            _instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else if (_instance != this)
-        {
-            Destroy(gameObject);
-        }
-    }
-
-    void OnDestroy()
-    {
-        Debug.Log("Destroy balance Array");
-        free_balance_array(balanceArray);
-    }
-
-    public void RequestTokensFromFaucet(string address)
+    public static void RequestTokensFromFaucet(string address)
     {
         System.IntPtr _address = Marshal.StringToHGlobalAnsi(address);
         try
@@ -97,7 +55,7 @@ public class SuiApi : MonoBehaviour
         }
     }
 
-    public BalanceData[] LoadWallets(string address)
+    public static BalanceData[] LoadWallets(string address)
     {
         Debug.Log($"Load Balance Of {address}");
         free_balance_array(balanceArray);
@@ -105,7 +63,7 @@ public class SuiApi : MonoBehaviour
         return GetBalances();
     }
 
-    public BalanceData[] GetBalances()
+    public static BalanceData[] GetBalances()
     {
         int length = (int)balanceArray.length;
 

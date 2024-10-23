@@ -11,9 +11,6 @@ using static SuiWallet;
 
 public class MultisigActions : MonoBehaviour
 {
-    private SuiWallet walletLib;
-    private SuiApi balanceLib;
-    private SuiMultisig multisigLib;
     private BalanceData[] balances;
     public TMP_Dropdown addressDropdown;
     public TMP_Dropdown addressDropdown2;
@@ -37,9 +34,6 @@ public class MultisigActions : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        walletLib = FindObjectOfType<SuiWallet>();
-        balanceLib = FindObjectOfType<SuiApi>();
-        multisigLib = FindObjectOfType<SuiMultisig>();
         addressDropdown.onValueChanged.AddListener(delegate
         {
             DropdownValueChanged(addressDropdown);
@@ -49,26 +43,12 @@ public class MultisigActions : MonoBehaviour
        {
            DropdownValueChanged(addressDropdown2);
        });
-        if (walletLib == null)
-        {
-            Debug.LogError("WalletLib component not found in the scene. Ensure a GameObject has this component attached.");
-            return; // Exit Start() if WalletLib is not found
-        }
-        if (balanceLib == null)
-        {
-            Debug.LogError("balanceLib component not found in the scene. Ensure a GameObject has this component attached.");
-            return; // Exit Start() if WalletLib is not found
-        }
-        if (multisigLib == null)
-        {
-            Debug.LogError("multisigLib component not found in the scene. Ensure a GameObject has this component attached.");
-            return; // Exit Start() if WalletLib is not found
-        }
+
     }
     public void RequestTokensFromFaucet()
     {
         if (!string.IsNullOrEmpty(multisigAddress.text))
-            balanceLib.RequestTokensFromFaucet(multisigAddress.text);
+            SuiApi.RequestTokensFromFaucet(multisigAddress.text);
     }
     public void LoadSuiBalance()
     {
@@ -77,7 +57,7 @@ public class MultisigActions : MonoBehaviour
         multisigBalance.text = string.Empty;
         if (!string.IsNullOrEmpty(multisigAddress.text))
         {
-            balances = balanceLib.LoadWallets(multisigAddress.text);
+            balances = SuiApi.LoadWallets(multisigAddress.text);
             Debug.Log($"Balance: {balances}");
             foreach (BalanceData balance in balances)
             {
@@ -90,7 +70,7 @@ public class MultisigActions : MonoBehaviour
         string[] addresses = GetAddressValuesFromScrollView(multisigScrollViewContent);
         byte[] weights = GetWeightValuesFromScrollView(multisigScrollViewContent);
         ushort threshold = GetThreadHold();
-        MultiSigData multiSigData = multisigLib.Get_or_create_multisig(addresses, weights, threshold);
+        MultiSigData multiSigData = SuiMultisig.Get_or_create_multisig(addresses, weights, threshold);
 
         if (string.IsNullOrEmpty(multiSigData.Error))
         {
@@ -228,14 +208,14 @@ public class MultisigActions : MonoBehaviour
     }
     public void CreateTransaction()
     {
-        transactionResult = multisigLib.CreateTransaction(multisigAddress.text, transferTo.text, GetAmountTransfer());
+        transactionResult = SuiMultisig.CreateTransaction(multisigAddress.text, transferTo.text, GetAmountTransfer());
         transactionBytes.text = transactionResult.BytesToHexString();
         Debug.Log($"Is success:{transactionResult.IsSuccess}");
         transactionResult.Print();
     }
     public void LoadWallets()
     {
-        wallets = walletLib.LoadWallets();
+        wallets = SuiWallet.LoadWallets();
         UpdateWallets(addressDropdown);
         UpdateWallets(addressDropdown2);
     }
@@ -250,7 +230,7 @@ public class MultisigActions : MonoBehaviour
             Debug.Log("address: " + address);
 
         }
-        string result = multisigLib.SignAndExecuteTransaction(multisigBytes.text, transactionBytes.text, addresses);
+        string result = SuiMultisig.SignAndExecuteTransaction(multisigBytes.text, transactionBytes.text, addresses);
         Debug.Log("SignAndExecuteTransaction: " + result);
     }
 

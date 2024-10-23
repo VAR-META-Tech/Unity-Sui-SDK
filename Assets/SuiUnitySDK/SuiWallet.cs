@@ -3,11 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
-
 public class SuiWallet : MonoBehaviour
 {
 #if UNITY_STANDALONE_OSX
-        private const string LIB_NAME = SuiConst.MACOS_LIB_NAME;
+    private const string LIB_NAME = SuiConst.MACOS_LIB_NAME;
 #elif UNITY_STANDALONE_WIN
         private const string LIB_NAME = "path/to/your/library.dll";
 #elif UNITY_STANDALONE_LINUX
@@ -127,61 +126,16 @@ public class SuiWallet : MonoBehaviour
     [DllImport(LIB_NAME)]
     public static extern void free_wallet(IntPtr wallet);
 
-    private WalletList walletList;
+    private static WalletList walletList;
 
-    // The static instance of the singleton
-    private static SuiWallet _instance;
-
-    // Property to access the instance
-    public static SuiWallet Instance
-    {
-        get
-        {
-            // If the instance is null, find it in the scene
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<SuiWallet>();
-
-                // If still null, create a new GameObject and attach this script
-                if (_instance == null)
-                {
-                    GameObject singletonObject = new GameObject(typeof(SuiWallet).ToString());
-                    _instance = singletonObject.AddComponent<SuiWallet>();
-                }
-            }
-            return _instance;
-        }
-    }
-
-    void Awake()
-    {
-        if (_instance == null)
-        {
-            _instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else if (_instance != this)
-        {
-            Destroy(gameObject);
-        }
-        walletList = get_wallets();
-
-    }
-
-    void OnDestroy()
-    {
-        Debug.Log("Destroy wallets");
-        free_wallet_list(walletList);
-    }
-
-    public WalletData[] LoadWallets()
+    public static WalletData[] LoadWallets()
     {
         free_wallet_list(walletList);
         walletList = get_wallets();
         return GetWallets();
     }
 
-    public bool ImportFromPrivateKey(string privateKey)
+    public static bool ImportFromPrivateKey(string privateKey)
     {
         System.IntPtr keyBase64Ptr = Marshal.StringToHGlobalAnsi(privateKey);
         try
@@ -212,7 +166,7 @@ public class SuiWallet : MonoBehaviour
         }
     }
 
-    public bool ImportFromMnemonic(string mnemonic)
+    public static bool ImportFromMnemonic(string mnemonic)
     {
         IntPtr mnemonicPtr = Marshal.StringToHGlobalAnsi(mnemonic);
         IntPtr keySchemePtr = Marshal.StringToHGlobalAnsi("ED25519");
@@ -245,7 +199,7 @@ public class SuiWallet : MonoBehaviour
         }
     }
 
-    public WalletData[] GetWallets()
+    public static WalletData[] GetWallets()
     {
         WalletData[] wallets = new WalletData[walletList.length];
         System.IntPtr currentPtr = walletList.wallets;
@@ -267,7 +221,7 @@ public class SuiWallet : MonoBehaviour
         return wallets;
     }
 
-    public WalletData GenerateWallet(string key_scheme, string word_length)
+    public static WalletData GenerateWallet(string key_scheme, string word_length)
     {
         try
         {
@@ -289,7 +243,7 @@ public class SuiWallet : MonoBehaviour
         }
     }
 
-    public void GenerateAndAddNew()
+    public static void GenerateAndAddNew()
     {
         generate_and_add_key();
 

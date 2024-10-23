@@ -17,7 +17,6 @@ public class BalanceActions : MonoBehaviour
     // Sample data
     private BalanceData[] balances;
 
-    private SuiApi balanceManager;
     public TMP_Dropdown dropdown;
     public TMP_InputField tmp_amount;
     public TMP_InputField tmp_recepient_address;
@@ -25,7 +24,6 @@ public class BalanceActions : MonoBehaviour
 
     void Awake()
     {
-        balanceManager = FindObjectOfType<SuiApi>();
         dropdown.onValueChanged.AddListener(delegate
      {
          DropdownValueChanged(dropdown);
@@ -41,56 +39,55 @@ public class BalanceActions : MonoBehaviour
     public void LoadBalances()
     {
         Debug.Log("Load balance of: " + dropdown.options[dropdown.value].text);
-        if (balanceManager == null) return;
-        balances = balanceManager.LoadWallets(dropdown.options[dropdown.value].text);
+        balances = SuiApi.LoadWallets(dropdown.options[dropdown.value].text);
         PopulateList();
     }
 
     public void ProgrammableTransaction()
     {
-        SuiTransactionBuilder transactionBuilder = new SuiTransactionBuilder();
-        SuiAgruments coin = transactionBuilder.CreateArguments();
-        transactionBuilder.AddArgumentGasCoin(coin);
-        SuiAgruments amountAg = transactionBuilder.CreateArguments();
-        SuiPure amountData = SuiBCS.BscBasic(SuiBCS.SuiType.U64,tmp_amount.text);
-        transactionBuilder.MakePure(amountAg,amountData);
-        transactionBuilder.AddSplitCoinsCommand(coin, amountAg);
+        SuiTransactionBuilder.CreateBuilder();
+        SuiAgruments coin = SuiTransactionBuilder.CreateArguments();
+        SuiTransactionBuilder.AddArgumentGasCoin(coin);
+        SuiAgruments amountAg = SuiTransactionBuilder.CreateArguments();
+        SuiPure amountData = SuiBCS.BscBasic(SuiBCS.SuiType.U64, tmp_amount.text);
+        SuiTransactionBuilder.MakePure(amountAg, amountData);
+        SuiTransactionBuilder.AddSplitCoinsCommand(coin, amountAg);
 
-        SuiAgruments agruments = transactionBuilder.CreateArguments();
-        transactionBuilder.AddArgumentResult(agruments, 0);
-        SuiAgruments recipient = transactionBuilder.CreateArguments();
-        SuiPure recipientData = SuiBCS.BscBasic(SuiBCS.SuiType.Address,tmp_recepient_address.text);
-        transactionBuilder.MakePure(recipient,recipientData);
-        transactionBuilder.AddTransferObjectCommand(agruments, recipient);
+        SuiAgruments agruments = SuiTransactionBuilder.CreateArguments();
+        SuiTransactionBuilder.AddArgumentResult(agruments, 0);
+        SuiAgruments recipient = SuiTransactionBuilder.CreateArguments();
+        SuiPure recipientData = SuiBCS.BscBasic(SuiBCS.SuiType.Address, tmp_recepient_address.text);
+        SuiTransactionBuilder.MakePure(recipient, recipientData);
+        SuiTransactionBuilder.AddTransferObjectCommand(agruments, recipient);
 
-        String reponse = transactionBuilder.ExecuteTransaction(dropdown.options[dropdown.value].text, 5000000);
+        String reponse = SuiTransactionBuilder.ExecuteTransaction(dropdown.options[dropdown.value].text, 5000000);
         Debug.Log(reponse);
     }
 
     public void ProgrammableTransactionAllowSponser()
-    {        
-        SuiTransactionBuilder transactionBuilder = new SuiTransactionBuilder();
-        SuiAgruments coin = transactionBuilder.CreateArguments();
-        transactionBuilder.AddArgumentGasCoin(coin);
-        SuiAgruments amountAg = transactionBuilder.CreateArguments();
-        SuiPure amountData = SuiBCS.BscBasic(SuiBCS.SuiType.U64,tmp_amount.text);
-        transactionBuilder.MakePure(amountAg,amountData);
-        transactionBuilder.AddSplitCoinsCommand(coin, amountAg);
+    {
+        SuiTransactionBuilder.CreateBuilder();
+        SuiAgruments coin = SuiTransactionBuilder.CreateArguments();
+        SuiTransactionBuilder.AddArgumentGasCoin(coin);
+        SuiAgruments amountAg = SuiTransactionBuilder.CreateArguments();
+        SuiPure amountData = SuiBCS.BscBasic(SuiBCS.SuiType.U64, tmp_amount.text);
+        SuiTransactionBuilder.MakePure(amountAg, amountData);
+        SuiTransactionBuilder.AddSplitCoinsCommand(coin, amountAg);
 
-        SuiAgruments agruments = transactionBuilder.CreateArguments();
-        transactionBuilder.AddArgumentResult(agruments, 0);
-        SuiAgruments recipient = transactionBuilder.CreateArguments();
-        SuiPure recipientData = SuiBCS.BscBasic(SuiBCS.SuiType.Address,tmp_recepient_address.text);
-        transactionBuilder.MakePure(recipient,recipientData);
-        transactionBuilder.AddTransferObjectCommand(agruments, recipient);
+        SuiAgruments agruments = SuiTransactionBuilder.CreateArguments();
+        SuiTransactionBuilder.AddArgumentResult(agruments, 0);
+        SuiAgruments recipient = SuiTransactionBuilder.CreateArguments();
+        SuiPure recipientData = SuiBCS.BscBasic(SuiBCS.SuiType.Address, tmp_recepient_address.text);
+        SuiTransactionBuilder.MakePure(recipient, recipientData);
+        SuiTransactionBuilder.AddTransferObjectCommand(agruments, recipient);
 
-        String reponse = transactionBuilder.ExecuteTransactionAllowSponser(dropdown.options[dropdown.value].text, 5000000,tmp_sponser_address.text);
+        String reponse = SuiTransactionBuilder.ExecuteTransactionAllowSponser(dropdown.options[dropdown.value].text, 5000000, tmp_sponser_address.text);
         Debug.Log(reponse);
     }
 
     public void RequestTokensFromFaucet()
     {
-        balanceManager.RequestTokensFromFaucet(dropdown.options[dropdown.value].text);
+        SuiApi.RequestTokensFromFaucet(dropdown.options[dropdown.value].text);
     }
 
     void PopulateList()
