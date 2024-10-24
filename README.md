@@ -130,7 +130,7 @@ The `SuiClient` class provides methods to build and switch between different Sui
 ##### Build Testnet
 To build the testnet environment:
 ```csharp
-bool success = SuiClient.Instance.BuildTestnet();
+bool success = SuiClient.BuildTestnet();
 if (success)
 {
     Debug.Log("Testnet built successfully.");
@@ -144,7 +144,7 @@ else
 ##### Build Devnet
 To build the devnet environment:
 ```csharp
-bool success = SuiClient.Instance.BuildDevnet();
+bool success = SuiClient.BuildDevnet();
 if (success)
 {
     Debug.Log("Devnet built successfully.");
@@ -158,7 +158,7 @@ else
 ##### Build Mainnet
 To build the mainnet environment:
 ```csharp
-bool success = SuiClient.Instance.BuildMainnet();
+bool success = SuiClient.BuildMainnet();
 if (success)
 {
     Debug.Log("Mainnet built successfully.");
@@ -175,13 +175,13 @@ The `SuiWallet` class provides various functionalities to manage wallets in your
 ##### Generate a New Wallet
 To generate a new wallet with a specified key scheme and word length:
 ```csharp
-SuiWallet.WalletData newWallet = SuiWallet.Instance.GenerateWallet("ED25519", "12");
+SuiWallet.WalletData newWallet = SuiWallet.GenerateWallet("ED25519", "12");
 newWallet.Show();
 ```
 ##### Import Wallet from Private Key
 To import a wallet using a private key:
 ```csharp
-bool success = SuiWallet.Instance.ImportFromPrivateKey("your_private_key_here");
+bool success = SuiWallet.ImportFromPrivateKey("your_private_key_here");
 if (success)
 {
     Debug.Log("Wallet imported successfully.");
@@ -194,7 +194,7 @@ else
 ##### Import Wallet from Mnemonic
 To import a wallet using a mnemonic phrase:
 ```csharp
-bool success = SuiWallet.Instance.ImportFromMnemonic("your_mnemonic_phrase_here");
+bool success = SuiWallet.ImportFromMnemonic("your_mnemonic_phrase_here");
 if (success)
 {
     Debug.Log("Wallet imported successfully.");
@@ -207,7 +207,7 @@ else
 ##### List All Wallets
 To list all wallets:
 ```csharp
-SuiWallet.WalletData[] wallets = SuiWallet.Instance.LoadWallets();
+SuiWallet.WalletData[] wallets = SuiWallet.LoadWallets();
 foreach (var wallet in wallets)
 {
     wallet.Show();
@@ -216,7 +216,7 @@ foreach (var wallet in wallets)
 ##### Generate and Add New Key
 To generate and add a new key to the wallet:
 ```csharp
-SuiWallet.Instance.GenerateAndAddNew();
+SuiWallet.GenerateAndAddNew();
 ```
 
 #### Transactions
@@ -225,36 +225,36 @@ The `SuiTransactionBuilder` class allows you to create and manage transactions. 
 ##### Create a New Transaction
 To create a new transaction:
 ```csharp
-SuiTransactionBuilder transactionBuilder = new SuiTransactionBuilder();
+SuiTransactionBuilder.CreateBuilder();
 ```
 
 ##### Add a Move Call Command
 To add a move call command to the transaction:
 ```csharp
-SuiTypeTags typeTags = transactionBuilder.CreateTypeTags();
-SuiAgruments arguments = transactionBuilder.CreateArguments();
-transactionBuilder.AddMoveCallCommand("package_id", "module_name", "function_name", typeTags, arguments);
+SuiTypeTags typeTags = SuiTransactionBuilder.CreateTypeTags();
+SuiAgruments arguments = SuiTransactionBuilder.CreateArguments();
+SuiTransactionBuilder.AddMoveCallCommand("package_id", "module_name", "function_name", typeTags, arguments);
 ```
 
 ##### Add a Transfer Object Command
 To add a transfer object command to the transaction:
 ```csharp
-SuiAgruments agreements = transactionBuilder.CreateArguments();
-SuiAgruments recipient = transactionBuilder.CreateArguments();
-transactionBuilder.AddTransferObjectCommand(agreements, recipient);
+SuiAgruments agreements = SuiTransactionBuilder.CreateArguments();
+SuiAgruments recipient = SuiTransactionBuilder.CreateArguments();
+SuiTransactionBuilder.AddTransferObjectCommand(agreements, recipient);
 ```
 
 ##### Execute the Transaction
 To execute the transaction:
 ```csharp
-string result = transactionBuilder.ExecuteTransaction("sender_address", 1000);
+string result = SuiTransactionBuilder.ExecuteTransaction("sender_address", 1000);
 Debug.Log(result);
 ```
 
 ##### Execute the Transaction with a Sponsor
 To execute the transaction with a sponsor:
 ```csharp
-string result = transactionBuilder.ExecuteTransactionAllowSponser("sender_address", 1000, "sponsor_address");
+string result = SuiTransactionBuilder.ExecuteTransactionAllowSponser("sender_address", 1000, "sponsor_address");
 Debug.Log(result);
 ```
 
@@ -276,20 +276,19 @@ The `SuiMultisig` class provides functionalities to create and manage multisig w
 ##### Create a Multisig Wallet
 To create a new multisig wallet:
 ```csharp
-SuiMultisig multisigWallet = new SuiMultisig();
-multisigWallet.CreateMultisigWallet(new string[] { "address1", "address2", "address3" }, 2);
+SuiMultisig.CreateMultisigWallet(new string[] { "address1", "address2", "address3" }, 2);
 ```
 
 ##### Create a Transaction from Multisig Wallet
 To create a transaction from a multisig wallet:
 ```csharp
-SuiTransactionBuilder transactionBuilder = multisigWallet.CreateTransaction();
+SuiMultisig.CreateTransaction();
 ```
 
 ##### Sign and Execute a Multisig Transaction
 To sign and execute a transaction using a multisig wallet:
 ```csharp
-string result = multisigWallet.SignAndExecuteTransaction(transactionBuilder, "signer_address");
+string result = SuiMultisig.SignAndExecuteTransaction(SuiTransactionBuilder, "signer_address");
 Debug.Log(result);
 ```
 
@@ -299,24 +298,21 @@ The `SuiNFT` class provides functionalities to mint, transfer, and retrieve NFT-
 ##### Mint a New NFT
 To mint a new NFT:
 ```csharp
-SuiNFT suiNFT = new SuiNFT();
-string result = suiNFT.Mint_NFT("sender_address", "NFT Name", "NFT Description", "NFT URI");
+string result = SuiNFT.Mint_NFT("sender_address", "NFT Name", "NFT Description", "NFT URI");
 Debug.Log("Mint Result: " + result);
 ```
 
 ##### Transfer an NFT
 To transfer an NFT to another address:
 ```csharp
-SuiNFT suiNFT = new SuiNFT();
-string result = suiNFT.Transfer_NFT("sender_address", "nft_id", "recipient_address");
+string result = SuiNFT.Transfer_NFT("sender_address", "nft_id", "recipient_address");
 Debug.Log("Transfer Result: " + result);
 ```
 
 ##### Retrieve Wallet Objects
 To retrieve wallet objects related to NFTs:
 ```csharp
-SuiNFT suiNFT = new SuiNFT();
-List<SuiNFT.CSuiObjectData> walletObjects = suiNFT.Get_wallet_objects("wallet_address");
+List<SuiNFT.CSuiObjectData> walletObjects = SuiNFT.Get_wallet_objects("wallet_address");
 foreach (var obj in walletObjects)
 {
     Debug.Log("Object ID: " + obj.object_id);
